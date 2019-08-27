@@ -20,8 +20,59 @@ public class FindCC {
 		con_atrList=null;
 		currency_Order=null;
 	}
-	public void LoadFile(String filename)throws IOException{
-	
+	public void loadFile(String filepath) throws IOException {
+		FileInputStream filein = new FileInputStream(filepath);
+		BufferedReader buffers = new BufferedReader(new InputStreamReader(filein));
+		String line = null;
+		
+		while((line = buffers.readLine()) != null) {
+			String subject = "";
+			String predicate = "";
+			String object = "";
+			String date = "";	//YYYY-MM-DD
+			int type = 0;	//待定
+			Timestamp ts = new Timestamp(0,0,0);
+			
+			String[] msg = line.split("\t");
+			subject = msg[0];
+			predicate = msg[1];
+			object = msg[2];
+			if(msg.length>3) {
+				date = msg[3];
+				String[] t = date.split("-");
+				int year = Integer.parseInt(t[0]);
+				int month = Integer.parseInt(t[1]);
+				int day = Integer.parseInt(t[2]);
+				ts = new Timestamp(year, month, day);
+			}
+			
+			if(sumGraph.containsKey(subject)) {
+				HashMap<Timestamp,ArrayList<Edge>> time_edge = sumGraph.get(subject);
+				if(!date.equals("") && time_edge.containsKey(date)) {	//如果有时间信息
+					Node n = new Node(type, object);
+					Edge e = new Edge(predicate, n);
+					ArrayList<Edge> e_list = time_edge.get(date);
+					if(!e_list.contains(e))
+						e_list.add(e);
+					time_edge.put(ts, e_list);
+				}
+				else {	//如果没有时间信息
+				}
+			}
+			else {
+				HashMap<Timestamp,ArrayList<Edge>> time_edge = new HashMap<Timestamp,ArrayList<Edge>>();
+				if(!date.equals("")) {	//有时间信息
+					ArrayList<Edge> e_list = new ArrayList<Edge>();
+					Node n = new Node(type, object);
+					Edge e = new Edge(predicate, n);
+					e_list.add(e);
+					time_edge.put(ts, e_list);
+					sumGraph.put(subject, time_edge);
+				}
+				else {	//没有时间信息
+				}
+			}
+		}
 	}
 	
 	public void Generate_currency_list() {
