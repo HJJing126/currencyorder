@@ -48,15 +48,16 @@ public class FindCC {
 			
 			if(sumGraph.containsKey(subject)) {
 				HashMap<Timestamp,ArrayList<Edge>> time_edge = sumGraph.get(subject);
-				if(!date.equals("") && time_edge.containsKey(date)) {	//如果有时间信息
+				if(!date.equals("")) {	//如果输入数据有时间信息
 					Node n = new Node(type, object);
 					Edge e = new Edge(predicate, n);
-					ArrayList<Edge> e_list = time_edge.get(date);
+					ArrayList<Edge> e_list = new ArrayList<Edge>();
+					if(time_edge.containsKey(ts)) {	//当前时间戳已存
+						e_list = time_edge.get(ts);
+					}
 					if(!e_list.contains(e))
 						e_list.add(e);
 					time_edge.put(ts, e_list);
-				}
-				else {	//如果没有时间信息
 				}
 			}
 			else {
