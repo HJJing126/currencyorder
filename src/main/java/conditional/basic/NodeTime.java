@@ -2,7 +2,7 @@ package conditional.basic;
 
 public class NodeTime extends Node{
     public Timestamp timestamp;
-	public NodeTime(int type, String value, Timestamp  timestamp) {
+	public NodeTime(String type, String value, Timestamp  timestamp) {
 		super(type, value);
 		// TODO Auto-generated constructor stub
 		this. timestamp=  timestamp;
