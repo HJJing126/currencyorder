@@ -19,6 +19,37 @@
                     <target>7</target>
                 </configuration>
             </plugin>
+             <plugin>
+                 <artifactId>maven-assembly-plugin</artifactId>
+                                <configuration>
+                                   <descriptorRefs>
+                                         <descriptorRef>jar-with-dependencies</descriptorRef>
+                                     </descriptorRefs>
+                                    </configuration>
+ 
+                 <executions>
+                                       <execution>
+                                             <id>build-miner</id>
+                                             <configuration>
+                                                   <appendAssemblyId>false</appendAssemblyId>
+                                                     <archive>
+                                                        <manifest>
+                                                             <mainClass>conditional.currencyorder.FindCC</mainClass>
+                                                           </manifest>
+                                                       </archive>
+                                                         <descriptorRefs>
+                                                             <descriptorRef>jar-with-dependencies</descriptorRef>
+                                                            </descriptorRefs>
+                                                            <finalName>FindCC</finalName>
+                                                         </configuration>
+                                                          <phase>package</phase>
+                                                           <goals>
+                                                                <goal>single</goal>
+                                                             </goals>
+                                                          </execution>
+                </executions>
+             </plugin>
+
         </plugins>
     </build>
   <properties>
