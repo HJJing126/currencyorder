@@ -76,6 +76,29 @@ public class FindCC {
 		}
 	}
 	
+	public void checkData() {
+		Iterator iter = sumGraph.entrySet().iterator();
+		int count = 0;
+		while (iter.hasNext() && count<10) {	//只检查前10个
+			Entry entry = (Entry) iter.next();
+			Object key = entry.getKey();
+			Object val = entry.getValue();
+			HashMap<Timestamp,ArrayList<Edge>> time_edge = sumGraph.get(key);
+			Iterator iter_TE = time_edge.entrySet().iterator();
+			while(iter_TE.hasNext()) {
+				Entry entry_TE = (Entry) iter_TE.next();
+				Object key_TE = entry_TE.getKey();
+				Object val_TE = entry_TE.getValue();
+				Timestamp t = (Timestamp) key_TE;
+				ArrayList<Edge> edge = time_edge.get(key_TE);
+				for(Edge e: edge) {
+					System.out.println(key+"\t"+e.predicate+"\t"+e.destnode.value+"\t"+t.year+"/"+t.month+"/"+t.day);
+				}
+			}
+			count++;
+		}
+	}
+
 	public void Generate_currency_list() {
 		int one_source;
 		for(String sourcenode:sumGraph.keySet() ) {
