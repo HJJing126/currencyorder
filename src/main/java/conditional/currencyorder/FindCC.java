@@ -1,8 +1,9 @@
 package conditional.currencyorder;
 
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 import conditional.basic.*;
 public class FindCC {
@@ -15,10 +16,10 @@ public class FindCC {
 	
 	
 	public FindCC() {
-		sumGraph =null;
-		atrList_Map=null;
-		con_atrList=null;
-		currency_Order=null;
+		sumGraph =new HashMap<String, HashMap<Timestamp,ArrayList<Edge>>>();
+		atrList_Map=new HashMap<String, HashMap<String,ArrayList<NodeTime>>>();
+		con_atrList=new HashMap<String,HashMap<Condition,ArrayList<NodeTime>>>();
+		currency_Order=new HashMap<String,HashMap<String,Order>>();
 	}
 	public void loadFile(String filepath) throws IOException {
 		FileInputStream filein = new FileInputStream(filepath);
@@ -30,7 +31,7 @@ public class FindCC {
 			String predicate = "";
 			String object = "";
 			String date = "";	//YYYY-MM-DD
-			int type = 0;	//待定
+			String type = null;	//待定
 			Timestamp ts = new Timestamp(0,0,0);
 			
 			String[] msg = line.split("\t");
@@ -186,8 +187,8 @@ public class FindCC {
 	
 	
 	// add node n at proper position  according to the timestamp
-	public ArrayList<NodeTime> Add2ArrayNT(Timestamp t,Node n,ArrayList<NodeTime> array_NT){
-		// problem: if now the orderdisobey the order
+	public ArrayList<NodeTime> Add2ArrayNT(Timestamp t,Node n, ArrayList<NodeTime> array_NT){
+		
         
 		NodeTime nt = new NodeTime(n.type, n.value, t);
 		boolean end=false;
@@ -264,12 +265,16 @@ public class FindCC {
 	
 	public static void main(String[] args) throws IOException {
 		FindCC findCC = new FindCC();
-		String filename = "";
-		findCC.LoadFile(filename);
+		String filename = args[0];
+		System.out.println("======load file======="+filename);
+		findCC.loadFile(filename);
+		System.out.println("======finish load file=======");
 		findCC.Generate_currency_list();
+		System.out.println("======finish Generate_currency_list=======");
 		findCC.SummarizeCurrencyOrder();
+		System.out.println("======finish SummarizeCurrencyOrder=======");
 		
-		System.out.println("hello");
+		//System.out.println("hello");
 	}
 	
 
