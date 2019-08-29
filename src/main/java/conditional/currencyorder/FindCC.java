@@ -14,7 +14,8 @@ public class FindCC {
 	HashMap<Condition,HashMap<String,HashMap<String,ArrayList<NodeTime>>>> con_atrList_Map;
 	//       con             atr              source     order
 	HashMap<String,HashMap<String,Order>> currency_Order ;//<atr,<value,order>>
-	HashMap<Condition,HashMap<String,HashMap<String,Order>>> con_currency_Order;//<con,<atr,<source,order>
+	HashMap<Condition,HashMap<String,HashMap<String,Order>>> con_currency_Order;
+	//<con,<atr,<value,order>
 	HashMap<String,HashSet<String>>  atr_Dom;//atr valueset
 	HashSet<String> co_atr;
 	
@@ -197,7 +198,7 @@ public class FindCC {
 				//for every time
 				//System.out.println("           operating:  "+t.year+"-"+t.month+"-"+t.day);
 				ArrayList<Edge> each_atr= timeEdge.get(t);
-				if(!each_atr.contains((Edge)con)) {
+				if(each_atr.contains((Edge)con)) {
 					for(int i=0;i< each_atr.size();i++) {
 						Edge e = each_atr.get(i);
 						//if this e is not the con and  this atr do not have all currency order
@@ -237,9 +238,7 @@ public class FindCC {
 	
 	
 	public void all_find_cc_sum(){
-		//just for return
-		
-		
+			
 		//real
 		//find the relative position 
 		for(String atr:atrList_Map.keySet()) {

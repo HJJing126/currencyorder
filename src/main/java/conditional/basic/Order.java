@@ -56,7 +56,7 @@ public class Order {
 		    else if(old_count!=0 && cur_count==0)
 		    	old_set.add(s);
 		    
-		    else if(old_count!= 0 && cur_count!=0 && old_count/(cur_count+old_count) > 0.8)
+		    else if(old_count!= 0 && cur_count!=0 && old_count/(cur_count+old_count) > 0.99999)
 		    	old_set.add(s);
 		    else
 		    	cur_set.add(s);
@@ -73,7 +73,7 @@ public class Order {
 		    	old_set.add(s);
 		    else if(cur_count!=0 && old_count==0)
 		    	cur_set.add(s);
-		    else if(old_count!= 0 && cur_count!=0 && cur_count/(cur_count+old_count) > 0.8)
+		    else if(old_count!= 0 && cur_count!=0 && cur_count/(cur_count+old_count) > 0.99999)
 		    	cur_set.add(s);
 		    else
 		    	old_set.add(s);
