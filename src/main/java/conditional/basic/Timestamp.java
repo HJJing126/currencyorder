@@ -1,9 +1,9 @@
 package conditional.basic;
 
 public class Timestamp {
-	public int year;
-	public int month;
-	public int day;
+	public Integer year;
+	public Integer month;
+	public Integer day;
 	
 	public Timestamp(int year, int month, int day) {
 		this.year = year;
@@ -31,6 +31,33 @@ public class Timestamp {
 		
 			
 	}
+    public int hashCode() {
+
+        int result = 17;
+        result = 31 * result + year.hashCode();
+        result = 31 * result + month.hashCode();
+        result = 31 * result + day.hashCode();
+
+        return result;
+    }
+
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Timestamp)) {
+            return false;
+        }
+
+        Timestamp tsp = (Timestamp) obj;
+        return year.equals(tsp.year) && month.equals(tsp.month) && day.equals(tsp.day);
+
+    }
+	
 
 	
 
