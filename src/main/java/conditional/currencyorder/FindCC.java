@@ -6,15 +6,16 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import conditional.basic.*;
+import conditional.basic.Edge;
 public class FindCC {
 	
 	
 	HashMap<String, HashMap<Timestamp,ArrayList<Edge>>> sumGraph;
 	HashMap<String, HashMap<String,ArrayList<NodeTime>>> atrList_Map;// <atr,<sourcenode,currencyorder>>
-	HashMap<Condition,HashMap<String,HashMap<String,ArrayList<NodeTime>>>> con_atrList_Map;
+	HashMap<Edge,HashMap<String,HashMap<String,ArrayList<NodeTime>>>> con_atrList_Map;
 	//       con             atr              source     order
 	HashMap<String,HashMap<String,Order>> currency_Order ;//<atr,<value,order>>
-	HashMap<Condition,HashMap<String,HashMap<String,Order>>> con_currency_Order;
+	HashMap<Edge,HashMap<String,HashMap<String,Order>>> con_currency_Order;
 	//<con,<atr,<value,order>
 	HashMap<String,HashSet<String>>  atr_Dom;//atr valueset
 	HashSet<String> co_atr;
@@ -22,9 +23,9 @@ public class FindCC {
 	public FindCC() {
 		sumGraph =new HashMap<String, HashMap<Timestamp,ArrayList<Edge>>>();
 		atrList_Map=new HashMap<String, HashMap<String,ArrayList<NodeTime>>>();
-		con_atrList_Map=new HashMap<Condition,HashMap<String,HashMap<String,ArrayList<NodeTime>>>>();
+		con_atrList_Map=new HashMap<Edge,HashMap<String,HashMap<String,ArrayList<NodeTime>>>>();
 		currency_Order=new HashMap<String,HashMap<String,Order>>();
-		con_currency_Order= new HashMap<Condition,HashMap<String,HashMap<String,Order>>>(); 
+		con_currency_Order= new HashMap<Edge,HashMap<String,HashMap<String,Order>>>(); 
 		atr_Dom = new HashMap<String,HashSet<String>> ();
 		co_atr = new HashSet<>();
 		
@@ -161,7 +162,7 @@ public class FindCC {
 		
 	}
 	/*
-	 * find conditional currency order
+	 * find Edgeal currency order
 	 * 
 	 */
 	public void Con_findcc( ) {
@@ -169,14 +170,16 @@ public class FindCC {
 			//if(!co_atr.contains(atr)) {
 				HashSet<String> dom = atr_Dom.get(atr);
 				for(String dom_str: dom) {
-					Node n = new Node("", dom_str);
-					Condition con = new Condition(atr,n);
-					if( !con_atrList_Map.containsKey(con)) {
+					Node n = new Node("null", dom_str);
+					Edge con = new Edge(atr,n);
+					if(!con_atrList_Map.containsKey(con)) {
 						con_atrList_Map.put(con, new HashMap<String,HashMap<String,ArrayList<NodeTime>>>()); 
 					}
 					HashMap<String,HashMap<String,ArrayList<NodeTime>>> snt = con_atrList_Map.get(con);
 					
 					snt = Con_findcc_core(con,snt);
+					//if(snt.size()==0)
+					//	System.out.println("snt is null");
 					con_atrList_Map.put(con,snt);
 				}
 			//}
@@ -190,7 +193,7 @@ public class FindCC {
 	}
 	
 
-	public HashMap<String,HashMap<String,ArrayList<NodeTime>>> Con_findcc_core(Condition con, HashMap<String,HashMap<String,ArrayList<NodeTime>>> snt) {
+	public HashMap<String,HashMap<String,ArrayList<NodeTime>>> Con_findcc_core(Edge con, HashMap<String,HashMap<String,ArrayList<NodeTime>>> snt) {
 		// TODO Auto-generated method stub
 		for(String sourcenode:sumGraph.keySet() ) {
 			//System.out.println("operating:  "+sourcenode);
@@ -200,11 +203,16 @@ public class FindCC {
 				//for every time
 				//System.out.println("           operating:  "+t.year+"-"+t.month+"-"+t.day);
 				ArrayList<Edge> each_atr= timeEdge.get(t);
-				if(each_atr.contains((Edge)con)) {
+				//System.out.println("each_atr is "+each_atr);
+				//System.out.println("con is"+con);
+				if(each_atr.contains(con)) {//satisfy the condition
+					
 					for(int i=0;i< each_atr.size();i++) {
 						Edge e = each_atr.get(i);
 						//if this e is not the con and  this atr do not have all currency order
-						if(!e.equals((Edge)con) && !co_atr.contains(e.predicate)) {
+						//if(!e.equals(con) && !co_atr.contains(e.predicate)) {
+						//if(e.predicate!=con.predicate) {
+						if(!e.equals(con)) {
 							if(!snt.containsKey(e.predicate)) {
 								
 								snt.put(e.predicate, new HashMap<String,ArrayList<NodeTime>>());
@@ -218,7 +226,9 @@ public class FindCC {
 							ArrayList<NodeTime> atr_time = atr_time_map.get(sourcenode);
 							
 							atr_time = Add2ArrayNT(t,e.destnode,atr_time);
-							snt.get(e.predicate).remove(sourcenode);
+//							if(atr_time == null)
+//								System.out.println("atr_time is null");
+							//snt.get(e.predicate).remove(sourcenode);
 							snt.get(e.predicate).put(sourcenode,atr_time);
 						}
 						
@@ -239,8 +249,7 @@ public class FindCC {
 	}
 	
 	
-	public void all_find_cc_sum(){
-			
+	public void all_find_cc_sum() {
 		//real
 		//find the relative position 
 		for(String atr:atrList_Map.keySet()) {
@@ -291,28 +300,48 @@ public class FindCC {
 		
 	}
 	
-	public void con_SummarizeCurrencyOrder() {
+	public void con_SummarizeCurrencyOrder(String filename) throws IOException{
+		
+		
 		
 		//HashMap<Str,HashMap<String,HashMap<String,Order>>> con_currency_Order
-		for(Condition con: con_atrList_Map.keySet()) {
-			System.out.println("condition is -----"+con.predicate+" = "+con.destnode.value);
+	//	if(con_atrList_Map!=null)
+		//	System.out.println("con_atrList_Map keyset  "+con_atrList_Map.keySet().size());
+		for(Edge con: con_atrList_Map.keySet()) {
+			//System.out.println("condition is :"+con.predicate+" = "+con.destnode.value);
+			//fileWritterC.write("condition is :"+con.predicate+" = "+con.destnode.value+  "\r\n");
 			if(!con_currency_Order.containsKey(con)) {
 				HashMap<String,HashMap<String,Order>> sso =new HashMap<String,HashMap<String,Order>>();
 				con_currency_Order.put(con,sso);
 			}
 			HashMap<String, HashMap<String, ArrayList<NodeTime>>> part_con_atrList_Map = con_atrList_Map.get(con);
+//			if(part_con_atrList_Map!=null)
+//				System.out.println("part_con_atrList_Map keyset  "+part_con_atrList_Map.keySet().size());
 			HashMap<String,HashMap<String,Order>> part_con_currency_Order = con_currency_Order.get(con);
-			 part_con_currency_Order = con_SummarizeCurrencyOrder_core(part_con_atrList_Map,part_con_currency_Order);
+			 part_con_currency_Order = con_SummarizeCurrencyOrder_core(con,part_con_atrList_Map,part_con_currency_Order,filename);
 			con_currency_Order.put(con,part_con_currency_Order);
 			
 		}
+		
 	}
 	
 	
 	
 	public  HashMap<String, HashMap<String, Order>> con_SummarizeCurrencyOrder_core(
+			Edge con,
 			HashMap<String, HashMap<String, ArrayList<NodeTime>>> part_con_atrList_Map,
-			HashMap<String, HashMap<String, Order>>part_con_currency_Order) {
+			HashMap<String, HashMap<String, Order>>part_con_currency_Order,
+            String filename                                                     )throws IOException {
+		
+		File file_C =new File(filename +".con_currency");
+		if(!file_C.exists()) {
+			file_C.createNewFile();
+		}
+		FileWriter fileWritterC = new FileWriter(file_C.getName(), false);
+		System.out.println("condition is :"+con.predicate+" = "+con.destnode.value);
+		fileWritterC.write("condition is :"+con.predicate+" = "+con.destnode.value+  "\r\n");
+		
+		//fileWritterC.write("__________condition___________"+  "\r\n");
 		// TODO Auto-generated method stub
 		
 		for(String atr:part_con_atrList_Map.keySet()) {
@@ -346,8 +375,10 @@ public class FindCC {
 			for(String s: part_con_currency_Order.get(atr).keySet()) {
 				if(part_con_currency_Order.get(atr).get(s)!=null) {
 					part_con_currency_Order.get(atr).get(s).SumOrder();
-					//System.out.println("VLAUE:   "+s);
-					//part_con_currency_Order.get(atr).get(s).print();
+					System.out.println("VLAUE:   "+s);
+					fileWritterC.write("VLAUE:   "+s+"\r\n");
+					part_con_currency_Order.get(atr).get(s).print();
+					fileWritterC.write(part_con_currency_Order.get(atr).get(s).print()+s+"\r\n");
 				}
 				   
 				  
@@ -355,6 +386,7 @@ public class FindCC {
 			}
 			
 		}
+		fileWritterC.close();
    
 		return part_con_currency_Order;
 		
@@ -420,9 +452,10 @@ public class FindCC {
 	public static void main(String[] args) throws IOException {
 		FindCC findCC = new FindCC();
 		//String filename = args[0];
-		String filename = "D:\\eclipse\\currencyorder\\Transactions_RDF";
+		String url = "D:\\\\eclipse\\\\currencyorder\\\\";
+		String filename = "Transactions_RDF";
 		System.out.println("======load file======="+filename);
-		findCC.loadFile(filename);
+		findCC.loadFile(url+filename);
 		System.out.println("======finish load file=======");
 //		System.out.println("======check data=======");
 //		findCC.checkData();
@@ -434,7 +467,7 @@ public class FindCC {
 		
 		findCC.Con_findcc();
 		System.out.println("======finish con_find_cc=======");
-		findCC.con_SummarizeCurrencyOrder();
+		findCC.con_SummarizeCurrencyOrder(filename);
 		System.out.println("======con_SummarizeCurrencyOrder=======");
 		
 		//System.out.println("hello");
