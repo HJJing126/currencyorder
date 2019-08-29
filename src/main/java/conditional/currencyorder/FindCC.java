@@ -188,6 +188,8 @@ public class FindCC {
 				
 			
 	}
+	
+
 	public HashMap<String,HashMap<String,ArrayList<NodeTime>>> Con_findcc_core(Condition con, HashMap<String,HashMap<String,ArrayList<NodeTime>>> snt) {
 		// TODO Auto-generated method stub
 		for(String sourcenode:sumGraph.keySet() ) {
