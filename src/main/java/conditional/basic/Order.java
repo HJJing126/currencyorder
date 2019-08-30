@@ -84,12 +84,14 @@ public class Order {
 		    
 		}
 	}
-	public void print() {
+	public String print() {
 		String print_str = "ATR : "+ value + '\n'+
 				           "old_set:"+ old_set.toString()+ '\n'+
 				           "cur_set:"+ cur_set.toString()+ '\n';
 		System.out.println(print_str);
-		
+
+		return print_str;
+
 	}
 	
 //	public void writeFile() throws IOException {
