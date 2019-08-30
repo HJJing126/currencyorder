@@ -121,6 +121,39 @@ public class FindCC {
 		}
 	}
 
+	public void writeFile() throws IOException {
+		//写文件
+		File file =new File("con_CurencyOrder");
+		if(!file.exists()) {
+			file.createNewFile();
+		}
+		FileWriter fileWritter = new FileWriter(file.getName(), true);
+		//end
+
+		//写文件
+		//System.out.println(con_currency_Order.size());
+		for(Condition con: con_currency_Order.keySet()) {	
+			fileWritter.write("condition is ----- "+con.predicate+" = "+con.destnode.value+"\n");
+			HashMap<String,HashMap<String,Order>> part_con_currency_Order = new HashMap<String,HashMap<String,Order>>();
+			part_con_currency_Order = con_currency_Order.get(con);
+			//System.out.println("con_currency_Order.get(con).size() = " + con_currency_Order.get(con).size());
+			
+			for(String str: part_con_currency_Order.keySet()) {
+				HashMap<String,Order> str_order = new HashMap<String,Order>();
+				str_order = part_con_currency_Order.get(str);
+				for(String s: str_order.keySet()) {
+					fileWritter.write(str + ": "+ s + "\n");
+					String print_str = "ATR : "+ str_order.get(s).value + '\n'+
+					           "old_set:"+ str_order.get(s).old_set.toString()+ '\n'+
+					           "cur_set:"+ str_order.get(s).cur_set.toString()+ '\n';
+					fileWritter.write(print_str + "\n");
+					System.out.println(print_str);
+				}
+			}
+		}
+		fileWritter.close();
+	}
+	
 	public void all_find_cc() {
 		
 		for(String sourcenode:sumGraph.keySet() ) {
@@ -239,8 +272,16 @@ public class FindCC {
 	}
 	
 	
-	public void all_find_cc_sum(){
-			
+	public void all_find_cc_sum() throws IOException{
+		//写文件
+		File file =new File("all_cc");
+		
+		if(!file.exists()) {
+			file.createNewFile();
+		}
+		FileWriter fileWritter = new FileWriter(file.getName(), true);
+		//end
+		
 		//real
 		//find the relative position 
 		for(String atr:atrList_Map.keySet()) {
@@ -277,6 +318,15 @@ public class FindCC {
 					currency_Order.get(atr).get(s).SumOrder();
 					System.out.println("VLAUE:   "+s);
 					currency_Order.get(atr).get(s).print();
+					
+					//写文件
+					fileWritter.write("VLAUE:   "+s+"\n");
+					String print_str = "ATR : "+ currency_Order.get(atr).get(s).value + '\n'+
+					           "old_set:"+ currency_Order.get(atr).get(s).old_set.toString()+ '\n'+
+					           "cur_set:"+ currency_Order.get(atr).get(s).cur_set.toString()+ '\n';
+					fileWritter.write(print_str + "\n");
+					//currency_Order.get(atr).get(s).writeFile();
+					//end
 				}
 				   
 				  
@@ -284,28 +334,27 @@ public class FindCC {
 			}
 			
 		}
-			
-			
-		
-		
-		
+	
+		fileWritter.close();
 	}
 	
-	public void con_SummarizeCurrencyOrder() {
-		
+	public void con_SummarizeCurrencyOrder() throws IOException {
+
 		//HashMap<Str,HashMap<String,HashMap<String,Order>>> con_currency_Order
 		for(Condition con: con_atrList_Map.keySet()) {
 			System.out.println("condition is -----"+con.predicate+" = "+con.destnode.value);
+			
 			if(!con_currency_Order.containsKey(con)) {
 				HashMap<String,HashMap<String,Order>> sso =new HashMap<String,HashMap<String,Order>>();
 				con_currency_Order.put(con,sso);
 			}
 			HashMap<String, HashMap<String, ArrayList<NodeTime>>> part_con_atrList_Map = con_atrList_Map.get(con);
 			HashMap<String,HashMap<String,Order>> part_con_currency_Order = con_currency_Order.get(con);
-			 part_con_currency_Order = con_SummarizeCurrencyOrder_core(part_con_atrList_Map,part_con_currency_Order);
+			part_con_currency_Order = con_SummarizeCurrencyOrder_core(part_con_atrList_Map,part_con_currency_Order);
 			con_currency_Order.put(con,part_con_currency_Order);
-			
 		}
+		
+
 	}
 	
 	
@@ -318,7 +367,6 @@ public class FindCC {
 		for(String atr:part_con_atrList_Map.keySet()) {
 			//for each atr
 			if(!part_con_currency_Order.containsKey(atr)) {
-				
 				part_con_currency_Order.put(atr, new HashMap<String,Order>());
 			}
 			//for each source
@@ -420,7 +468,7 @@ public class FindCC {
 	public static void main(String[] args) throws IOException {
 		FindCC findCC = new FindCC();
 		//String filename = args[0];
-		String filename = "D:\\eclipse\\currencyorder\\Transactions_RDF";
+		String filename = "Transactions_RDF";
 		System.out.println("======load file======="+filename);
 		findCC.loadFile(filename);
 		System.out.println("======finish load file=======");
@@ -436,6 +484,8 @@ public class FindCC {
 		System.out.println("======finish con_find_cc=======");
 		findCC.con_SummarizeCurrencyOrder();
 		System.out.println("======con_SummarizeCurrencyOrder=======");
+		
+		findCC.writeFile();
 		
 		//System.out.println("hello");
 	}

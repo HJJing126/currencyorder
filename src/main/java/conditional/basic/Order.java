@@ -1,5 +1,8 @@
 package conditional.basic;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class Order {
@@ -86,8 +89,23 @@ public class Order {
 				           "old_set:"+ old_set.toString()+ '\n'+
 				           "cur_set:"+ cur_set.toString()+ '\n';
 		System.out.println(print_str);
-				           
+		
 	}
 	
+//	public void writeFile() throws IOException {
+//		//写文件
+//		File file =new File("all_cc");
+//		
+//		if(!file.exists()) {
+//			file.createNewFile();
+//		}
+//		FileWriter fileWritter = new FileWriter(file.getName(), true);
+//		//end
+//		
+//		String print_str = "ATR : "+ value + '\n'+
+//		           "old_set:"+ old_set.toString()+ '\n'+
+//		           "cur_set:"+ cur_set.toString()+ '\n';
+//		fileWritter.write(print_str + "\n");
+//	}
 
 }
