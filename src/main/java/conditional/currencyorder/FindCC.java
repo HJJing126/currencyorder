@@ -123,6 +123,42 @@ public class FindCC {
 		}
 	}
 
+	public void writeFile() throws IOException {
+		//写文件
+		File file =new File("con_CurencyOrder");
+		if(!file.exists()) {
+			file.createNewFile();
+		}
+		FileWriter fileWritter = new FileWriter(file.getName(), true);
+		//end
+
+		//写文件
+		//System.out.println(con_currency_Order.size());
+		for(Edge con: con_currency_Order.keySet()) {	
+			fileWritter.write("condition is ----- "+con.predicate+" = "+con.destnode.value+"\n");
+			HashMap<String,HashMap<String,Order>> part_con_currency_Order = new HashMap<String,HashMap<String,Order>>();
+			part_con_currency_Order = con_currency_Order.get(con);
+			
+			for(String str: part_con_currency_Order.keySet()) {
+				HashMap<String,Order> str_order = new HashMap<String,Order>();
+				str_order = part_con_currency_Order.get(str);
+				for(String s: str_order.keySet()) {
+					if(str_order.get(s) != null) {	/////////////////////
+						fileWritter.write(str + ": "+ s + "\n");
+						//System.out.println(str_order.size());
+						
+						String print_str = "ATR : " + str_order.get(s).value + '\n'+
+						           "old_set:"+ str_order.get(s).old_set.toString()+ '\n'+
+						           "cur_set:"+ str_order.get(s).cur_set.toString()+ '\n';
+						fileWritter.write(print_str + "\n");
+						System.out.println(print_str);
+					}
+				}
+			}
+		}
+		fileWritter.close();
+	}
+	
 	public void all_find_cc() {
 
 		for (String sourcenode : sumGraph.keySet()) {
@@ -152,15 +188,24 @@ public class FindCC {
 
 					atr_time = Add2ArrayNT(t, e.destnode, atr_time);
 					atrList_Map.get(e.predicate).remove(sourcenode);
+<<<<<<< HEAD
 					atrList_Map.get(e.predicate).put(sourcenode, atr_time);
 
 				}
 
+=======
+					atrList_Map.get(e.predicate).put(sourcenode,atr_time);
+					
+				}	
+>>>>>>> 9c712f3e33b417947220e82c4435d99e24da0763
 			}
 
 			System.out.println("operating:  " + sourcenode + "end ");
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9c712f3e33b417947220e82c4435d99e24da0763
 	}
 
 	/*
@@ -190,7 +235,10 @@ public class FindCC {
 			// }
 
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9c712f3e33b417947220e82c4435d99e24da0763
 	}
 
 	public HashMap<String, HashMap<String, ArrayList<NodeTime>>> Con_findcc_core(
@@ -248,6 +296,7 @@ public class FindCC {
 
 		return snt;
 	}
+<<<<<<< HEAD
 
 	public void all_find_cc_sum() {
 		// real
@@ -257,6 +306,27 @@ public class FindCC {
 			if (!currency_Order.containsKey(atr)) {
 
 				currency_Order.put(atr, new HashMap<String, Order>());
+=======
+	
+	
+	public void all_find_cc_sum() throws IOException{
+		//写文件
+		File file =new File("all_cc");
+		
+		if(!file.exists()) {
+			file.createNewFile();
+		}
+		FileWriter fileWritter = new FileWriter(file.getName(), true);
+		//end
+
+		//real
+		//find the relative position 
+		for(String atr:atrList_Map.keySet()) {
+			//for each atr
+			if(!currency_Order.containsKey(atr)) {
+				
+				currency_Order.put(atr, new HashMap<String,Order>());
+>>>>>>> 9c712f3e33b417947220e82c4435d99e24da0763
 			}
 			// for each source
 			for (String s : atrList_Map.get(atr).keySet()) {
@@ -289,6 +359,7 @@ public class FindCC {
 					currency_Order.get(atr).get(s).SumOrder();
 					System.out.println("VLAUE:   " + s);
 					currency_Order.get(atr).get(s).print();
+<<<<<<< HEAD
 				}
 
 			}
@@ -320,6 +391,49 @@ public class FindCC {
 					part_con_atrList_Map, part_con_currency_Order, filename);
 			con_currency_Order.put(con, part_con_currency_Order);
 
+=======
+					
+					//写文件
+					fileWritter.write("VLAUE:   "+s+"\n");
+					String print_str = "ATR : "+ currency_Order.get(atr).get(s).value + '\n'+
+					           "old_set:"+ currency_Order.get(atr).get(s).old_set.toString()+ '\n'+
+					           "cur_set:"+ currency_Order.get(atr).get(s).cur_set.toString()+ '\n';
+					fileWritter.write(print_str + "\n");
+					//currency_Order.get(atr).get(s).writeFile();
+					//end
+				}				   
+			}
+		}
+	
+		fileWritter.close();
+	}
+	
+
+//	public void con_SummarizeCurrencyOrder() throws IOException {
+//
+//		//HashMap<Str,HashMap<String,HashMap<String,Order>>> con_currency_Order
+//		for(Condition con: con_atrList_Map.keySet()) {
+//			System.out.println("condition is -----"+con.predicate+" = "+con.destnode.value);
+			
+
+	public void con_SummarizeCurrencyOrder(String filename) throws IOException{
+		//HashMap<Str,HashMap<String,HashMap<String,Order>>> con_currency_Order
+	//	if(con_atrList_Map!=null)
+		//	System.out.println("con_atrList_Map keyset  "+con_atrList_Map.keySet().size());
+		for(Edge con: con_atrList_Map.keySet()) {
+			//System.out.println("condition is :"+con.predicate+" = "+con.destnode.value);
+			//fileWritterC.write("condition is :"+con.predicate+" = "+con.destnode.value+  "\r\n");
+			if(!con_currency_Order.containsKey(con)) {
+				HashMap<String,HashMap<String,Order>> sso =new HashMap<String,HashMap<String,Order>>();
+				con_currency_Order.put(con,sso);
+			}
+			HashMap<String, HashMap<String, ArrayList<NodeTime>>> part_con_atrList_Map = con_atrList_Map.get(con);
+			HashMap<String,HashMap<String,Order>> part_con_currency_Order = con_currency_Order.get(con);
+
+			part_con_currency_Order = con_SummarizeCurrencyOrder_core(con,part_con_atrList_Map,part_con_currency_Order,filename);
+			con_currency_Order.put(con,part_con_currency_Order);
+			System.out.println("con_currency_Order: " + con_currency_Order.size());
+>>>>>>> 9c712f3e33b417947220e82c4435d99e24da0763
 		}
 
 	}
@@ -342,12 +456,20 @@ public class FindCC {
 
 		// fileWritterC.write("__________condition___________"+ "\r\n");
 		// TODO Auto-generated method stub
+<<<<<<< HEAD
 
 		for (String atr : part_con_atrList_Map.keySet()) {
 			// for each atr
 			if (!part_con_currency_Order.containsKey(atr)) {
 
 				part_con_currency_Order.put(atr, new HashMap<String, Order>());
+=======
+		
+		for(String atr:part_con_atrList_Map.keySet()) {
+			//for each atr
+			if(!part_con_currency_Order.containsKey(atr)) {
+				part_con_currency_Order.put(atr, new HashMap<String,Order>());
+>>>>>>> 9c712f3e33b417947220e82c4435d99e24da0763
 			}
 			// for each source
 			for (String s : part_con_atrList_Map.get(atr).keySet()) {
@@ -451,8 +573,15 @@ public class FindCC {
 
 	public static void main(String[] args) throws IOException {
 		FindCC findCC = new FindCC();
+<<<<<<< HEAD
 		// String filename = args[0];
 		String url = "D:\\\\eclipse\\\\currencyorder\\\\";
+=======
+		//String filename = args[0];
+
+		String url = ""; //"D:\\\\eclipse\\\\currencyorder\\\\";
+
+>>>>>>> 9c712f3e33b417947220e82c4435d99e24da0763
 		String filename = "Transactions_RDF";
 		System.out.println("======load file=======" + filename);
 		findCC.loadFile(url + filename);
@@ -469,8 +598,15 @@ public class FindCC {
 		System.out.println("======finish con_find_cc=======");
 		findCC.con_SummarizeCurrencyOrder(filename);
 		System.out.println("======con_SummarizeCurrencyOrder=======");
+<<<<<<< HEAD
 
 		// System.out.println("hello");
+=======
+		
+		findCC.writeFile();
+		
+		//System.out.println("hello");
+>>>>>>> 9c712f3e33b417947220e82c4435d99e24da0763
 	}
 
 }
